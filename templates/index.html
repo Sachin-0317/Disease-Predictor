@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disease Predictor</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; width: 100%; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: linear-gradient(135deg, #EBF4FF 0%, #ffffff 60%, #F5F3FF 100%);
+      color: #1A202C;
+    }
+    .app-wrapper { width: 100%; height: 100%; overflow: auto; }
+
+    .bg-decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bg-decor::before, .bg-decor::after {
+      content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+    }
+    .bg-decor::before { width: 380px; height: 380px; background: #BEE3F8; top: -120px; left: -100px; }
+    .bg-decor::after  { width: 420px; height: 420px; background: #E9D8FD; bottom: -140px; right: -120px; }
+
+    .card { box-shadow: 0 10px 40px -10px rgba(66,99,235,0.15), 0 4px 12px -4px rgba(0,0,0,0.04); }
+
+    .tab-btn { transition: all 0.25s ease; }
+    .tab-btn.active {
+      background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%);
+      color: white;
+      box-shadow: 0 8px 20px -6px rgba(102,126,234,0.5);
+    }
+    .tab-btn.inactive { background: white; border: 1.5px solid #E2E8F0; color: #718096; }
+    .tab-btn.inactive:hover { border-color: #CBD5E0; color: #4A5568; }
+
+    .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #718096; }
+
+    .input-wrap { position: relative; }
+    .input-wrap input, .input-wrap select {
+      width: 100%; background: #F7FAFC; border: none;
+      border-left: 3px solid transparent; border-radius: 10px;
+      padding: 12px 14px 12px 40px; font-size: 14px; font-weight: 500;
+      color: #1A202C; transition: all 0.2s ease; outline: none; appearance: none;
+    }
+    .input-wrap select {
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+    }
+    .input-wrap input:focus, .input-wrap select:focus {
+      background: #EDF2F7; border-left-color: #4299E1;
+      box-shadow: inset 0 0 0 1px rgba(66,153,225,0.1);
+    }
+    .input-wrap .input-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: #A0AEC0; pointer-events: none; display: flex; align-items: center; justify-content: center;
+    }
+
+    .predict-btn {
+      background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%);
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 16px -4px rgba(102,126,234,0.4);
+    }
+    .predict-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(102,126,234,0.55); }
+    .predict-btn:active:not(:disabled) { transform: translateY(0); }
+    .predict-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .result-card { animation: resultIn 0.45s cubic-bezier(0.22,1,0.36,1); }
+    @keyframes resultIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .progress-fill { transition: width 1s cubic-bezier(0.22,1,0.36,1); }
+
+    .icon-badge {
+      background: linear-gradient(135deg, #4299E1 0%, #667EEA 100%);
+      box-shadow: 0 10px 20px -6px rgba(102,126,234,0.5);
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .fade-swap { animation: fadeSwap 0.3s ease; }
+    @keyframes fadeSwap {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr !important; } }
+  </style>
+</head>
+<body class="h-full">
+  <div class="bg-decor"></div>
+  <main class="app-wrapper relative flex items-center justify-center px-4 py-10">
+    <section class="card relative w-full max-w-[580px] bg-white rounded-[20px] p-7 sm:p-8">
+
+      <!-- Header -->
+      <header class="flex items-start gap-4 mb-6">
+        <div class="icon-badge shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center">
+          <i data-lucide="stethoscope" class="text-white" style="width:28px;height:28px;stroke-width:2.2"></i>
+        </div>
+        <div class="flex-1 pt-0.5">
+          <h1 class="font-extrabold tracking-tight" style="font-size:28px;color:#1A202C;line-height:1.15;">Disease Predictor</h1>
+          <p class="mt-1.5 text-gray-500" style="font-size:14px;line-height:1.5;">Enter your health data for an AI-powered risk assessment</p>
+        </div>
+      </header>
+
+      <!-- Tab Switcher -->
+      <div class="grid grid-cols-2 gap-3 mb-7" role="tablist">
+        <button role="tab" data-tab="diabetes" class="tab-btn active flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold">
+          <span>🩸</span><span>Diabetes</span>
+        </button>
+        <button role="tab" data-tab="heart" class="tab-btn inactive flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold">
+          <span>❤️</span><span>Heart Disease</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form id="predict-form" novalidate>
+        <div id="fields" class="form-grid grid grid-cols-2 gap-x-4 gap-y-5 mb-7"></div>
+        <button type="submit" id="predict-btn" class="predict-btn w-full flex items-center justify-center gap-2 text-white font-bold rounded-[12px] py-4" style="font-size:16px;">
+          <span id="btn-label" class="flex items-center gap-2">
+            <i data-lucide="activity" style="width:18px;height:18px;stroke-width:2.5"></i> Predict Risk
+          </span>
+        </button>
+      </form>
+
+      <!-- Result -->
+      <div id="result" class="mt-6 hidden"></div>
+
+      <!-- Footer -->
+      <p class="mt-5 text-center text-[11px] text-gray-400 leading-relaxed">For informational use only. Not a medical diagnosis.</p>
+    </section>
+  </main>
+
+  <script>
+    const FIELDS = {
+      diabetes: [
+        { name: 'Glucose',    label: 'Glucose (mg/dL)',  type: 'number', icon: 'droplet',     placeholder: '120' },
+        { name: 'BloodPressure', label: 'Blood Pressure', type: 'number', icon: 'gauge',       placeholder: '80' },
+        { name: 'BMI',        label: 'BMI',              type: 'number', icon: 'scale',        placeholder: '24.5', step: '0.1' },
+        { name: 'Insulin',    label: 'Insulin (μU/mL)',  type: 'number', icon: 'syringe',      placeholder: '85' },
+        { name: 'Age',        label: 'Age',              type: 'number', icon: 'user',         placeholder: '35' },
+        { name: 'Pregnancies',label: 'Pregnancies',      type: 'number', icon: 'baby',         placeholder: '0' },
+        { name: 'SkinThickness', label: 'Skin Thickness', type: 'number', icon: 'layers',     placeholder: '20' },
+        { name: 'DiabetesPedigreeFunction', label: 'Pedigree Function', type: 'number', icon: 'dna', placeholder: '0.5', step: '0.01' },
+      ],
+      heart: [
+        { name: 'age',     label: 'Age',               type: 'number', icon: 'user',          placeholder: '45' },
+        { name: 'sex',     label: 'Sex',               type: 'select', icon: 'users',         options: [['','Select'],['1','Male'],['0','Female']] },
+        { name: 'chol',    label: 'Cholesterol (mg/dL)',type: 'number', icon: 'flask-conical', placeholder: '200' },
+        { name: 'trestbps',label: 'Resting BP',        type: 'number', icon: 'gauge',         placeholder: '130' },
+        { name: 'thalach', label: 'Max Heart Rate',    type: 'number', icon: 'heart-pulse',   placeholder: '150' },
+        { name: 'cp',      label: 'Chest Pain (0-3)',  type: 'number', icon: 'activity',      placeholder: '0' },
+        { name: 'fbs',     label: 'Fasting BS >120',   type: 'select', icon: 'droplets',      options: [['','Select'],['0','No'],['1','Yes']] },
+        { name: 'restecg', label: 'Rest ECG (0-2)',    type: 'number', icon: 'heart',         placeholder: '0' },
+        { name: 'exang',   label: 'Exercise Angina',   type: 'select', icon: 'zap',           options: [['','Select'],['0','No'],['1','Yes']] },
+        { name: 'oldpeak', label: 'Oldpeak',           type: 'number', icon: 'trending-down', placeholder: '1.0', step: '0.1' },
+        { name: 'slope',   label: 'Slope (0-2)',       type: 'number', icon: 'bar-chart-2',   placeholder: '1' },
+        { name: 'ca',      label: 'CA (0-3)',          type: 'number', icon: 'git-branch',    placeholder: '0' },
+        { name: 'thal',    label: 'Thal (0-3)',        type: 'number', icon: 'shield',        placeholder: '2' },
+      ]
+    };
+
+    let currentTab = 'diabetes';
+    const fieldsEl = document.getElementById('fields');
+    const resultEl = document.getElementById('result');
+
+    function renderFields(tab) {
+      fieldsEl.classList.remove('fade-swap');
+      void fieldsEl.offsetWidth;
+      fieldsEl.classList.add('fade-swap');
+      fieldsEl.innerHTML = FIELDS[tab].map(f => {
+        const id = `f-${tab}-${f.name}`;
+        const control = f.type === 'select'
+          ? `<select id="${id}" name="${f.name}" required>${f.options.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</select>`
+          : `<input id="${id}" name="${f.name}" type="number" inputmode="decimal" ${f.step ? `step="${f.step}"` : ''} placeholder="${f.placeholder||''}" required />`;
+        return `
+          <div>
+            <label for="${id}" class="field-label block mb-1.5">${f.label}</label>
+            <div class="input-wrap">
+              ${control}
+              <span class="input-icon"><i data-lucide="${f.icon}" style="width:16px;height:16px;stroke-width:2.2"></i></span>
+            </div>
+          </div>`;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        if (tab === currentTab) return;
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.tab === tab);
+          b.classList.toggle('inactive', b.dataset.tab !== tab);
+        });
+        hideResult();
+        renderFields(tab);
+      });
+    });
+
+    async function callAPI(tab, data) {
+      const body = { disease: tab === 'heart' ? 'heart' : 'diabetes' };
+      if (tab === 'diabetes') {
+        body['Pregnancies'] = parseFloat(data['Pregnancies']) || 0;
+        body['Glucose'] = parseFloat(data['Glucose']);
+        body['BloodPressure'] = parseFloat(data['BloodPressure']);
+        body['SkinThickness'] = parseFloat(data['SkinThickness']) || 20;
+        body['Insulin'] = parseFloat(data['Insulin']);
+        body['BMI'] = parseFloat(data['BMI']);
+        body['DiabetesPedigreeFunction'] = parseFloat(data['DiabetesPedigreeFunction']) || 0.5;
+        body['Age'] = parseFloat(data['Age']);
+      } else {
+        body['age']      = parseFloat(data['age']);
+        body['sex']      = parseFloat(data['sex']);
+        body['cp']       = parseFloat(data['cp']);
+        body['trestbps'] = parseFloat(data['trestbps']);
+        body['chol']     = parseFloat(data['chol']);
+        body['fbs']      = parseFloat(data['fbs']);
+        body['restecg']  = parseFloat(data['restecg']);
+        body['thalach']  = parseFloat(data['thalach']);
+        body['exang']    = parseFloat(data['exang']);
+        body['oldpeak']  = parseFloat(data['oldpeak']);
+        body['slope']    = parseFloat(data['slope']);
+        body['ca']       = parseFloat(data['ca']);
+        body['thal']     = parseFloat(data['thal']);
+      }
+
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      return {
+        positive: json.prediction === 1,
+        confidence: json.confidence,
+        shap_values: json.shap_values || {}
+      };
+    }
+
+    function hideResult() {
+      resultEl.classList.add('hidden');
+      resultEl.innerHTML = '';
+    }
+
+    function showResult(tab, res) {
+      const positive    = res.positive;
+      const bgColor     = positive ? '#FFF5F5' : '#F0FFF4';
+      const borderColor = positive ? '#F56565' : '#48BB78';
+      const textColor   = positive ? '#9B2C2C' : '#22543D';
+      const subColor    = positive ? '#C53030' : '#2F855A';
+      const iconBg      = positive ? '#FED7D7' : '#C6F6D5';
+      const icon        = positive ? '⚠️' : '✅';
+      const label       = tab === 'diabetes' ? 'Diabetes' : 'Heart Disease';
+      const title       = positive ? `Elevated risk of ${label}` : `Low risk of ${label}`;
+      const subtitle    = positive
+        ? 'Consider consulting a healthcare professional for a thorough evaluation.'
+        : 'Your indicators look healthy. Keep up your current lifestyle.';
+
+      // SHAP bars
+      const shap = res.shap_values || {};
+      const sorted = Object.entries(shap)
+        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+        .slice(0, 6);
+      const maxVal = Math.max(...sorted.map(([, v]) => Math.abs(v)));
+
+      const shapHTML = sorted.map(([feat, val]) => {
+        const pct   = maxVal > 0 ? Math.round((Math.abs(val) / maxVal) * 100) : 0;
+        const color = val > 0 ? '#F56565' : '#48BB78';
+        const dir   = val > 0 ? '▲ raises risk' : '▼ lowers risk';
+        return `
+          <div class="mb-3">
+            <div class="flex justify-between mb-1" style="font-size:11px;">
+              <span style="font-weight:600;color:#4A5568;">${feat}</span>
+              <span style="color:${color};font-weight:600;">${dir}</span>
+            </div>
+            <div class="w-full h-2 rounded-full" style="background:rgba(0,0,0,0.06);">
+              <div class="h-full rounded-full progress-fill" style="width:0%;background:${color};" data-width="${pct}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      resultEl.innerHTML = `
+        <div class="result-card rounded-2xl p-5" style="background:${bgColor};border-left:4px solid ${borderColor};">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background:${iconBg};">${icon}</div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-[15px] leading-tight" style="color:${textColor};">${title}</h3>
+              <p class="mt-1 text-[13px] leading-relaxed" style="color:${subColor};">${subtitle}</p>
+
+              <!-- Confidence -->
+              <div class="mt-4">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[11px] font-semibold uppercase tracking-wider" style="color:${subColor};opacity:0.85;">Confidence</span>
+                  <span class="text-[13px] font-bold" style="color:${textColor};">${res.confidence}%</span>
+                </div>
+                <div class="w-full h-2 rounded-full overflow-hidden" style="background:rgba(0,0,0,0.06);">
+                  <div class="progress-fill h-full rounded-full" id="conf-bar" style="width:0%;background:${borderColor};"></div>
+                </div>
+              </div>
+
+              <!-- SHAP breakdown -->
+              <div class="mt-5 pt-4" style="border-top:1px solid rgba(0,0,0,0.06);">
+                <p class="text-[11px] font-bold uppercase tracking-wider mb-3" style="color:${textColor};">📊 Risk Factor Breakdown</p>
+                ${shapHTML}
+                <p class="mt-1 text-[10px]" style="color:#A0AEC0;">🔴 raises risk &nbsp;|&nbsp; 🟢 lowers risk &nbsp;|&nbsp; bar width = relative impact</p>
+              </div>
+
+              <p class="mt-4 text-[11px] leading-relaxed" style="color:#718096;">
+                Disclaimer: This is not a substitute for professional medical advice, diagnosis, or treatment.
+              </p>
+            </div>
+          </div>
+        </div>`;
+
+      resultEl.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        const confBar = document.getElementById('conf-bar');
+        if (confBar) confBar.style.width = res.confidence + '%';
+        resultEl.querySelectorAll('[data-width]').forEach(el => {
+          el.style.width = el.dataset.width;
+        });
+      });
+    }
+
+    const form     = document.getElementById('predict-form');
+    const btn      = document.getElementById('predict-btn');
+    const btnLabel = document.getElementById('btn-label');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      for (const f of FIELDS[currentTab]) {
+        if (data[f.name] === '' || data[f.name] === undefined) {
+          const input = form.querySelector(`[name="${f.name}"]`);
+          if (input) {
+            input.focus();
+            input.style.boxShadow = 'inset 0 0 0 1.5px #FC8181';
+            setTimeout(() => input.style.boxShadow = '', 1500);
+          }
+          return;
+        }
+      }
+
+      btn.disabled = true;
+      btnLabel.innerHTML = '<span class="spinner"></span> Analyzing...';
+      hideResult();
+
+      try {
+        const res = await callAPI(currentTab, data);
+        showResult(currentTab, res);
+      } catch (err) {
+        resultEl.innerHTML = `<div class="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">⚠️ Failed to connect to server. Make sure Flask is running.</div>`;
+        resultEl.classList.remove('hidden');
+      }
+
+      btn.disabled = false;
+      btnLabel.innerHTML = '<i data-lucide="activity" style="width:18px;height:18px;stroke-width:2.5"></i> Predict Risk';
+      lucide.createIcons();
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    renderFields(currentTab);
+    lucide.createIcons();
+  </script>
+</body>
+</html>
