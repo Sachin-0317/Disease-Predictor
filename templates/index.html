@@ -41,126 +41,72 @@
       color: var(--text);
       transition: background 0.3s, color 0.3s;
     }
-    .app-wrapper { width: 100%; height: 100%; overflow: auto; }
-
+    .app-wrapper { width: 100%; min-height: 100%; overflow: auto; }
     .bg-decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .bg-decor::before, .bg-decor::after {
-      content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; transition: background 0.3s;
-    }
+    .bg-decor::before, .bg-decor::after { content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; }
     .bg-decor::before { width: 380px; height: 380px; background: var(--blob1); top: -120px; left: -100px; }
     .bg-decor::after  { width: 420px; height: 420px; background: var(--blob2); bottom: -140px; right: -120px; }
 
-    .card {
-      background: var(--card-bg);
-      box-shadow: 0 10px 40px -10px var(--shadow), 0 4px 12px -4px rgba(0,0,0,0.04);
-      transition: background 0.3s, box-shadow 0.3s;
-    }
+    .card { background: var(--card-bg); box-shadow: 0 10px 40px -10px var(--shadow), 0 4px 12px -4px rgba(0,0,0,0.04); transition: background 0.3s; }
 
     .tab-btn { transition: all 0.25s ease; }
-    .tab-btn.active {
-      background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%);
-      color: white;
-      box-shadow: 0 8px 20px -6px rgba(102,126,234,0.5);
-    }
+    .tab-btn.active { background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%); color: white; box-shadow: 0 8px 20px -6px rgba(102,126,234,0.5); }
     .tab-btn.inactive { background: transparent; border: 1.5px solid var(--border); color: var(--subtext); }
-    .tab-btn.inactive:hover { border-color: #CBD5E0; color: var(--text); }
+    .tab-btn.inactive:hover { color: var(--text); }
 
     .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtext); }
 
     .input-wrap { position: relative; }
     .input-wrap input, .input-wrap select {
-      width: 100%; background: var(--field-bg); border: none;
-      border-left: 3px solid transparent; border-radius: 10px;
-      padding: 12px 14px 12px 40px; font-size: 14px; font-weight: 500;
-      color: var(--text); transition: all 0.2s ease; outline: none; appearance: none;
+      width: 100%; background: var(--field-bg); border: none; border-left: 3px solid transparent;
+      border-radius: 10px; padding: 12px 14px 12px 40px; font-size: 14px; font-weight: 500;
+      color: var(--text); transition: all 0.2s; outline: none; appearance: none;
     }
     .input-wrap select {
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
     }
-    .input-wrap input:focus, .input-wrap select:focus {
-      background: var(--field-focus); border-left-color: #4299E1;
-    }
-    .input-wrap .input-icon {
-      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-      color: #A0AEC0; pointer-events: none; display: flex; align-items: center; justify-content: center;
-    }
+    .input-wrap input:focus, .input-wrap select:focus { background: var(--field-focus); border-left-color: #4299E1; }
+    .input-wrap .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #A0AEC0; pointer-events: none; }
 
-    .predict-btn {
-      background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%);
-      transition: all 0.25s ease;
-      box-shadow: 0 6px 16px -4px rgba(102,126,234,0.4);
-    }
+    .predict-btn { background: linear-gradient(90deg, #4299E1 0%, #667EEA 100%); transition: all 0.25s; box-shadow: 0 6px 16px -4px rgba(102,126,234,0.4); }
     .predict-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(102,126,234,0.55); }
-    .predict-btn:active:not(:disabled) { transform: translateY(0); }
     .predict-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
     .result-card { animation: resultIn 0.45s cubic-bezier(0.22,1,0.36,1); }
-    @keyframes resultIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
+    @keyframes resultIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     .progress-fill { transition: width 1s cubic-bezier(0.22,1,0.36,1); }
 
-    .icon-badge {
-      background: linear-gradient(135deg, #4299E1 0%, #667EEA 100%);
-      box-shadow: 0 10px 20px -6px rgba(102,126,234,0.5);
-    }
+    .icon-badge { background: linear-gradient(135deg, #4299E1 0%, #667EEA 100%); box-shadow: 0 10px 20px -6px rgba(102,126,234,0.5); }
 
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,0.35);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
+    .spinner { width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .fade-swap { animation: fadeSwap 0.3s ease; }
-    @keyframes fadeSwap {
-      from { opacity: 0; transform: translateY(4px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeSwap { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 
-    .dark-toggle {
-      width: 44px; height: 24px; border-radius: 12px;
-      background: var(--border); position: relative; cursor: pointer;
-      transition: background 0.3s; border: none; padding: 0;
-    }
+    .dark-toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background 0.3s; border:none; padding:0; }
     .dark-toggle.on { background: #4299E1; }
-    .dark-toggle .knob {
-      width: 18px; height: 18px; border-radius: 50%; background: white;
-      position: absolute; top: 3px; left: 3px;
-      transition: transform 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    }
+    .dark-toggle .knob { width:18px; height:18px; border-radius:50%; background:white; position:absolute; top:3px; left:3px; transition:transform 0.3s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
     .dark-toggle.on .knob { transform: translateX(20px); }
 
-    .whatif-slider {
-      width: 100%; height: 6px; border-radius: 3px; outline: none;
-      appearance: none; background: var(--border); cursor: pointer;
-    }
-    .whatif-slider::-webkit-slider-thumb {
-      appearance: none; width: 16px; height: 16px; border-radius: 50%;
-      background: #4299E1; cursor: pointer; box-shadow: 0 0 0 3px rgba(66,153,225,0.2);
-    }
-    .whatif-slider::-moz-range-thumb {
-      width: 16px; height: 16px; border-radius: 50%; background: #4299E1;
-      cursor: pointer; border: none;
-    }
+    .whatif-slider { width:100%; height:6px; border-radius:3px; outline:none; appearance:none; background:var(--border); cursor:pointer; }
+    .whatif-slider::-webkit-slider-thumb { appearance:none; width:16px; height:16px; border-radius:50%; background:#4299E1; cursor:pointer; box-shadow:0 0 0 3px rgba(66,153,225,0.2); }
+    .whatif-slider::-moz-range-thumb { width:16px; height:16px; border-radius:50%; background:#4299E1; cursor:pointer; border:none; }
 
-    .whatif-card {
-      background: var(--field-bg);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      transition: background 0.3s, border 0.3s;
-    }
+    .section-card { background:var(--field-bg); border-radius:14px; border:1px solid var(--border); transition:background 0.3s, border 0.3s; }
+
+    .history-item { border-bottom: 1px solid var(--border); transition: background 0.2s; }
+    .history-item:last-child { border-bottom: none; }
+    .history-item:hover { background: var(--field-focus); }
 
     @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr !important; } }
   </style>
 </head>
 <body class="h-full">
   <div class="bg-decor"></div>
-<main class="app-wrapper relative flex items-start justify-center px-4 py-10">    <section class="card relative w-full max-w-[580px] rounded-[20px] p-7 sm:p-8">
+  <main class="app-wrapper relative flex items-start justify-center px-4 py-10">
+    <section class="card relative w-full max-w-[580px] rounded-[20px] p-7 sm:p-8">
 
       <!-- Header -->
       <header class="flex items-start gap-4 mb-6">
@@ -171,20 +117,16 @@
           <h1 class="font-extrabold tracking-tight" style="font-size:28px;line-height:1.15;">Disease Predictor</h1>
           <p class="mt-1.5" style="font-size:14px;line-height:1.5;color:var(--subtext);">Enter your health data for an AI-powered risk assessment</p>
         </div>
-        <div class="flex flex-col items-center gap-1 pt-1">
-          <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode"><span class="knob"></span></button>
+        <div class="flex flex-col items-center gap-1 pt-1 shrink-0">
+          <button id="dark-toggle" class="dark-toggle"><span class="knob"></span></button>
           <span style="font-size:10px;color:var(--subtext);" id="dark-label">Light</span>
         </div>
       </header>
 
-      <!-- Tab Switcher -->
+      <!-- Tabs -->
       <div class="grid grid-cols-2 gap-3 mb-7" role="tablist">
-        <button role="tab" data-tab="diabetes" class="tab-btn active flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold">
-          <span>🩸</span><span>Diabetes</span>
-        </button>
-        <button role="tab" data-tab="heart" class="tab-btn inactive flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold">
-          <span>❤️</span><span>Heart Disease</span>
-        </button>
+        <button role="tab" data-tab="diabetes" class="tab-btn active flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold"><span>🩸</span><span>Diabetes</span></button>
+        <button role="tab" data-tab="heart" class="tab-btn inactive flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold"><span>❤️</span><span>Heart Disease</span></button>
       </div>
 
       <!-- Form -->
@@ -200,15 +142,29 @@
       <!-- Result -->
       <div id="result" class="mt-6 hidden"></div>
 
-      <!-- What-if Section -->
+      <!-- What-if -->
       <div id="whatif-section" class="mt-6 hidden">
-        <div class="whatif-card p-5">
+        <div class="section-card p-5">
           <div class="flex items-center gap-2 mb-4">
-            <span style="font-size:16px;">🎯</span>
+            <span>🎯</span>
             <p class="font-bold text-[13px]">What-if Explorer</p>
-            <span class="text-[11px] ml-1" style="color:var(--subtext);">Drag to see how changes affect your risk</span>
+            <span class="text-[11px] ml-1" style="color:var(--subtext);">Drag to see live risk changes</span>
           </div>
           <div id="whatif-sliders" class="grid grid-cols-1 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div id="history-section" class="mt-6 hidden">
+        <div class="section-card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span>📈</span>
+              <p class="font-bold text-[13px]">Prediction History</p>
+            </div>
+            <button id="clear-history" class="text-[11px] font-semibold px-3 py-1 rounded-full" style="color:#F56565;border:1px solid #F56565;">Clear</button>
+          </div>
+          <div id="history-list"></div>
         </div>
       </div>
 
@@ -217,17 +173,19 @@
   </main>
 
   <script>
-    // Dark mode
+    // ---- Dark Mode ----
     const toggleBtn = document.getElementById('dark-toggle');
     const darkLabel = document.getElementById('dark-label');
-    let dark = false;
-    toggleBtn.addEventListener('click', () => {
-      dark = !dark;
+    let dark = localStorage.getItem('dp-dark') === '1';
+    function applyDark() {
       document.documentElement.classList.toggle('dark', dark);
       toggleBtn.classList.toggle('on', dark);
       darkLabel.textContent = dark ? 'Dark' : 'Light';
-    });
+    }
+    applyDark();
+    toggleBtn.addEventListener('click', () => { dark = !dark; localStorage.setItem('dp-dark', dark ? '1' : '0'); applyDark(); });
 
+    // ---- Fields ----
     const FIELDS = {
       diabetes: [
         { name: 'Glucose',    label: 'Glucose (mg/dL)',  type: 'number', icon: 'droplet',  placeholder: '120', min:50,   max:200, step:1 },
@@ -258,10 +216,12 @@
 
     let currentTab = 'diabetes';
     let lastFormData = null;
-    const fieldsEl   = document.getElementById('fields');
-    const resultEl   = document.getElementById('result');
-    const whatifSec  = document.getElementById('whatif-section');
-    const whatifEl   = document.getElementById('whatif-sliders');
+    const fieldsEl  = document.getElementById('fields');
+    const resultEl  = document.getElementById('result');
+    const whatifSec = document.getElementById('whatif-section');
+    const whatifEl  = document.getElementById('whatif-sliders');
+    const historySec = document.getElementById('history-section');
+    const historyList = document.getElementById('history-list');
 
     function renderFields(tab) {
       fieldsEl.classList.remove('fade-swap');
@@ -299,6 +259,7 @@
       });
     });
 
+    // ---- API ----
     async function callAPI(tab, data) {
       const body = { disease: tab === 'heart' ? 'heart' : 'diabetes' };
       if (tab === 'diabetes') {
@@ -319,40 +280,35 @@
       return { positive: json.prediction === 1, confidence: json.confidence, shap_values: json.shap_values || {} };
     }
 
-    function hideResult() {
-      resultEl.classList.add('hidden');
-      resultEl.innerHTML = '';
-    }
+    function hideResult() { resultEl.classList.add('hidden'); resultEl.innerHTML = ''; }
 
+    // ---- Show Result ----
     function showResult(tab, res) {
-      const positive    = res.positive;
-      const bgColor     = positive ? (dark ? '#3b1111' : '#FFF5F5') : (dark ? '#0f2a1a' : '#F0FFF4');
-      const borderColor = positive ? '#F56565' : '#48BB78';
-      const textColor   = positive ? (dark ? '#fca5a5' : '#9B2C2C') : (dark ? '#86efac' : '#22543D');
-      const subColor    = positive ? (dark ? '#f87171' : '#C53030') : (dark ? '#4ade80' : '#2F855A');
-      const iconBg      = positive ? (dark ? '#7f1d1d' : '#FED7D7') : (dark ? '#14532d' : '#C6F6D5');
-      const icon        = positive ? '⚠️' : '✅';
+      const p = res.positive;
+      const bgColor     = p ? (dark?'#3b1111':'#FFF5F5') : (dark?'#0f2a1a':'#F0FFF4');
+      const borderColor = p ? '#F56565' : '#48BB78';
+      const textColor   = p ? (dark?'#fca5a5':'#9B2C2C') : (dark?'#86efac':'#22543D');
+      const subColor    = p ? (dark?'#f87171':'#C53030') : (dark?'#4ade80':'#2F855A');
+      const iconBg      = p ? (dark?'#7f1d1d':'#FED7D7') : (dark?'#14532d':'#C6F6D5');
+      const icon        = p ? '⚠️' : '✅';
       const label       = tab === 'diabetes' ? 'Diabetes' : 'Heart Disease';
-      const title       = positive ? `Elevated risk of ${label}` : `Low risk of ${label}`;
-      const subtitle    = positive
-        ? 'Consider consulting a healthcare professional for a thorough evaluation.'
-        : 'Your indicators look healthy. Keep up your current lifestyle.';
+      const title       = p ? `Elevated risk of ${label}` : `Low risk of ${label}`;
+      const subtitle    = p ? 'Consider consulting a healthcare professional.' : 'Your indicators look healthy. Keep it up!';
 
       const shap   = res.shap_values || {};
-      const sorted = Object.entries(shap).sort((a,b) => Math.abs(b[1])-Math.abs(a[1])).slice(0,6);
-      const maxVal = Math.max(...sorted.map(([,v]) => Math.abs(v)));
-      const shapHTML = sorted.map(([feat, val]) => {
-        const pct   = maxVal > 0 ? Math.round((Math.abs(val)/maxVal)*100) : 0;
-        const color = val > 0 ? '#F56565' : '#48BB78';
-        const dir   = val > 0 ? '▲ raises risk' : '▼ lowers risk';
+      const sorted = Object.entries(shap).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,6);
+      const maxVal = Math.max(...sorted.map(([,v])=>Math.abs(v)));
+      const shapHTML = sorted.map(([feat,val]) => {
+        const pct = maxVal>0 ? Math.round((Math.abs(val)/maxVal)*100) : 0;
+        const c   = val>0 ? '#F56565' : '#48BB78';
         return `
           <div class="mb-3">
             <div class="flex justify-between mb-1" style="font-size:11px;">
               <span style="font-weight:600;color:var(--text);">${feat}</span>
-              <span style="color:${color};font-weight:600;">${dir}</span>
+              <span style="color:${c};font-weight:600;">${val>0?'▲ raises':'▼ lowers'} risk</span>
             </div>
             <div class="w-full h-2 rounded-full" style="background:var(--border);">
-              <div class="h-full rounded-full progress-fill" style="width:0%;background:${color};" data-width="${pct}%"></div>
+              <div class="h-full rounded-full progress-fill" style="width:0%;background:${c};" data-width="${pct}%"></div>
             </div>
           </div>`;
       }).join('');
@@ -362,10 +318,10 @@
           <div class="flex items-start gap-3">
             <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background:${iconBg};">${icon}</div>
             <div class="flex-1 min-w-0">
-              <h3 class="font-bold text-[15px] leading-tight" style="color:${textColor};">${title}</h3>
-              <p class="mt-1 text-[13px] leading-relaxed" style="color:${subColor};">${subtitle}</p>
+              <h3 class="font-bold text-[15px]" style="color:${textColor};">${title}</h3>
+              <p class="mt-1 text-[13px]" style="color:${subColor};">${subtitle}</p>
               <div class="mt-4">
-                <div class="flex items-center justify-between mb-1.5">
+                <div class="flex justify-between mb-1.5">
                   <span class="text-[11px] font-semibold uppercase tracking-wider" style="color:${subColor};opacity:0.85;">Confidence</span>
                   <span class="text-[13px] font-bold" style="color:${textColor};">${res.confidence}%</span>
                 </div>
@@ -378,13 +334,10 @@
                 ${shapHTML}
                 <p class="mt-1 text-[10px]" style="color:var(--subtext);">🔴 raises risk &nbsp;|&nbsp; 🟢 lowers risk</p>
               </div>
-              <p class="mt-4 text-[11px] leading-relaxed" style="color:var(--subtext);">
-                Disclaimer: This is not a substitute for professional medical advice, diagnosis, or treatment.
-              </p>
+              <p class="mt-4 text-[11px]" style="color:var(--subtext);">Not a substitute for professional medical advice.</p>
             </div>
           </div>
         </div>`;
-
       resultEl.classList.remove('hidden');
       requestAnimationFrame(() => {
         const bar = document.getElementById('conf-bar');
@@ -393,9 +346,10 @@
       });
     }
 
+    // ---- What-if Sliders ----
     function buildWhatIfSliders(tab, formData) {
-      const numericFields = FIELDS[tab].filter(f => f.type === 'number');
-      whatifEl.innerHTML = numericFields.map(f => {
+      const numFields = FIELDS[tab].filter(f => f.type === 'number');
+      whatifEl.innerHTML = numFields.map(f => {
         const val = parseFloat(formData[f.name]) || parseFloat(f.placeholder) || 0;
         return `
           <div>
@@ -403,14 +357,10 @@
               <span class="font-semibold" style="color:var(--text);">${f.label}</span>
               <span class="font-bold" id="wi-val-${f.name}" style="color:#4299E1;">${val}</span>
             </div>
-            <input type="range" class="whatif-slider" id="wi-${f.name}"
-              min="${f.min||0}" max="${f.max||200}" step="${f.step||1}" value="${val}"
-              data-field="${f.name}" />
+            <input type="range" class="whatif-slider" min="${f.min||0}" max="${f.max||200}" step="${f.step||1}" value="${val}" data-field="${f.name}" />
           </div>`;
       }).join('');
-
       whatifSec.classList.remove('hidden');
-
       let debounce;
       whatifEl.querySelectorAll('.whatif-slider').forEach(slider => {
         slider.addEventListener('input', () => {
@@ -418,16 +368,60 @@
           const updated = { ...lastFormData, [slider.dataset.field]: slider.value };
           clearTimeout(debounce);
           debounce = setTimeout(async () => {
-            try {
-              const res = await callAPI(tab, updated);
-              lastFormData = updated;
-              showResult(tab, res);
-            } catch(e) {}
+            try { const res = await callAPI(tab, updated); lastFormData = updated; showResult(tab, res); } catch(e) {}
           }, 400);
         });
       });
     }
 
+    // ---- History ----
+    function loadHistory() { try { return JSON.parse(localStorage.getItem('dp-history') || '[]'); } catch { return []; } }
+    function saveHistory(h) { localStorage.setItem('dp-history', JSON.stringify(h.slice(0, 20))); }
+
+    function addToHistory(tab, res) {
+      const h = loadHistory();
+      h.unshift({
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        disease: tab === 'diabetes' ? 'Diabetes' : 'Heart Disease',
+        label: res.positive ? 'Positive' : 'Negative',
+        confidence: res.confidence,
+        positive: res.positive
+      });
+      saveHistory(h);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const h = loadHistory();
+      if (h.length === 0) { historySec.classList.add('hidden'); return; }
+      historySec.classList.remove('hidden');
+      historyList.innerHTML = h.map(entry => {
+        const color = entry.positive ? '#F56565' : '#48BB78';
+        const icon  = entry.positive ? '⚠️' : '✅';
+        return `
+          <div class="history-item px-2 py-3 rounded-lg flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span style="font-size:16px;">${icon}</span>
+              <div class="min-w-0">
+                <p class="font-semibold text-[12px] truncate" style="color:var(--text);">${entry.disease}</p>
+                <p class="text-[10px]" style="color:var(--subtext);">${entry.date}</p>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="font-bold text-[12px]" style="color:${color};">${entry.label}</p>
+              <p class="text-[10px]" style="color:var(--subtext);">${entry.confidence}% conf.</p>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    document.getElementById('clear-history').addEventListener('click', () => {
+      localStorage.removeItem('dp-history');
+      renderHistory();
+    });
+
+    // ---- Form Submit ----
     const form     = document.getElementById('predict-form');
     const btn      = document.getElementById('predict-btn');
     const btnLabel = document.getElementById('btn-label');
@@ -435,34 +429,27 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
-
       for (const f of FIELDS[currentTab]) {
         if (data[f.name] === '' || data[f.name] === undefined) {
           const input = form.querySelector(`[name="${f.name}"]`);
-          if (input) {
-            input.focus();
-            input.style.boxShadow = 'inset 0 0 0 1.5px #FC8181';
-            setTimeout(() => input.style.boxShadow = '', 1500);
-          }
+          if (input) { input.focus(); input.style.boxShadow = 'inset 0 0 0 1.5px #FC8181'; setTimeout(() => input.style.boxShadow = '', 1500); }
           return;
         }
       }
-
       btn.disabled = true;
       btnLabel.innerHTML = '<span class="spinner"></span> Analyzing...';
       hideResult();
       whatifSec.classList.add('hidden');
-
       try {
         const res = await callAPI(currentTab, data);
         lastFormData = { ...data };
         showResult(currentTab, res);
         buildWhatIfSliders(currentTab, data);
+        addToHistory(currentTab, res);
       } catch (err) {
-        resultEl.innerHTML = `<div class="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">⚠️ Failed to connect to server. Make sure Flask is running.</div>`;
+        resultEl.innerHTML = `<div class="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">⚠️ Failed to connect. Make sure Flask is running.</div>`;
         resultEl.classList.remove('hidden');
       }
-
       btn.disabled = false;
       btnLabel.innerHTML = '<i data-lucide="activity" style="width:18px;height:18px;stroke-width:2.5"></i> Predict Risk';
       lucide.createIcons();
@@ -470,6 +457,7 @@
     });
 
     renderFields(currentTab);
+    renderHistory();
     lucide.createIcons();
   </script>
 </body>
