@@ -10,22 +10,51 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: linear-gradient(135deg, #EBF4FF 0%, #ffffff 60%, #F5F3FF 100%);
+      --card-bg: #ffffff;
+      --text: #1A202C;
+      --subtext: #718096;
+      --field-bg: #F7FAFC;
+      --field-focus: #EDF2F7;
+      --border: #E2E8F0;
+      --blob1: #BEE3F8;
+      --blob2: #E9D8FD;
+      --shadow: rgba(66,99,235,0.15);
+    }
+    .dark {
+      --bg: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+      --card-bg: #1e293b;
+      --text: #f1f5f9;
+      --subtext: #94a3b8;
+      --field-bg: #0f172a;
+      --field-focus: #1e293b;
+      --border: #334155;
+      --blob1: #1e3a5f;
+      --blob2: #2d1b69;
+      --shadow: rgba(0,0,0,0.4);
+    }
     html, body { height: 100%; width: 100%; }
     body {
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      background: linear-gradient(135deg, #EBF4FF 0%, #ffffff 60%, #F5F3FF 100%);
-      color: #1A202C;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
     .app-wrapper { width: 100%; height: 100%; overflow: auto; }
 
     .bg-decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .bg-decor::before, .bg-decor::after {
-      content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+      content: ""; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; transition: background 0.3s;
     }
-    .bg-decor::before { width: 380px; height: 380px; background: #BEE3F8; top: -120px; left: -100px; }
-    .bg-decor::after  { width: 420px; height: 420px; background: #E9D8FD; bottom: -140px; right: -120px; }
+    .bg-decor::before { width: 380px; height: 380px; background: var(--blob1); top: -120px; left: -100px; }
+    .bg-decor::after  { width: 420px; height: 420px; background: var(--blob2); bottom: -140px; right: -120px; }
 
-    .card { box-shadow: 0 10px 40px -10px rgba(66,99,235,0.15), 0 4px 12px -4px rgba(0,0,0,0.04); }
+    .card {
+      background: var(--card-bg);
+      box-shadow: 0 10px 40px -10px var(--shadow), 0 4px 12px -4px rgba(0,0,0,0.04);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
 
     .tab-btn { transition: all 0.25s ease; }
     .tab-btn.active {
@@ -33,25 +62,24 @@
       color: white;
       box-shadow: 0 8px 20px -6px rgba(102,126,234,0.5);
     }
-    .tab-btn.inactive { background: white; border: 1.5px solid #E2E8F0; color: #718096; }
-    .tab-btn.inactive:hover { border-color: #CBD5E0; color: #4A5568; }
+    .tab-btn.inactive { background: transparent; border: 1.5px solid var(--border); color: var(--subtext); }
+    .tab-btn.inactive:hover { border-color: #CBD5E0; color: var(--text); }
 
-    .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #718096; }
+    .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtext); }
 
     .input-wrap { position: relative; }
     .input-wrap input, .input-wrap select {
-      width: 100%; background: #F7FAFC; border: none;
+      width: 100%; background: var(--field-bg); border: none;
       border-left: 3px solid transparent; border-radius: 10px;
       padding: 12px 14px 12px 40px; font-size: 14px; font-weight: 500;
-      color: #1A202C; transition: all 0.2s ease; outline: none; appearance: none;
+      color: var(--text); transition: all 0.2s ease; outline: none; appearance: none;
     }
     .input-wrap select {
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
     }
     .input-wrap input:focus, .input-wrap select:focus {
-      background: #EDF2F7; border-left-color: #4299E1;
-      box-shadow: inset 0 0 0 1px rgba(66,153,225,0.1);
+      background: var(--field-focus); border-left-color: #4299E1;
     }
     .input-wrap .input-icon {
       position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
@@ -94,13 +122,45 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    .dark-toggle {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: var(--border); position: relative; cursor: pointer;
+      transition: background 0.3s; border: none; padding: 0;
+    }
+    .dark-toggle.on { background: #4299E1; }
+    .dark-toggle .knob {
+      width: 18px; height: 18px; border-radius: 50%; background: white;
+      position: absolute; top: 3px; left: 3px;
+      transition: transform 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .dark-toggle.on .knob { transform: translateX(20px); }
+
+    .whatif-slider {
+      width: 100%; height: 6px; border-radius: 3px; outline: none;
+      appearance: none; background: var(--border); cursor: pointer;
+    }
+    .whatif-slider::-webkit-slider-thumb {
+      appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: #4299E1; cursor: pointer; box-shadow: 0 0 0 3px rgba(66,153,225,0.2);
+    }
+    .whatif-slider::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 50%; background: #4299E1;
+      cursor: pointer; border: none;
+    }
+
+    .whatif-card {
+      background: var(--field-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      transition: background 0.3s, border 0.3s;
+    }
+
     @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr !important; } }
   </style>
 </head>
 <body class="h-full">
   <div class="bg-decor"></div>
-  <main class="app-wrapper relative flex items-center justify-center px-4 py-10">
-    <section class="card relative w-full max-w-[580px] bg-white rounded-[20px] p-7 sm:p-8">
+<main class="app-wrapper relative flex items-start justify-center px-4 py-10">    <section class="card relative w-full max-w-[580px] rounded-[20px] p-7 sm:p-8">
 
       <!-- Header -->
       <header class="flex items-start gap-4 mb-6">
@@ -108,8 +168,12 @@
           <i data-lucide="stethoscope" class="text-white" style="width:28px;height:28px;stroke-width:2.2"></i>
         </div>
         <div class="flex-1 pt-0.5">
-          <h1 class="font-extrabold tracking-tight" style="font-size:28px;color:#1A202C;line-height:1.15;">Disease Predictor</h1>
-          <p class="mt-1.5 text-gray-500" style="font-size:14px;line-height:1.5;">Enter your health data for an AI-powered risk assessment</p>
+          <h1 class="font-extrabold tracking-tight" style="font-size:28px;line-height:1.15;">Disease Predictor</h1>
+          <p class="mt-1.5" style="font-size:14px;line-height:1.5;color:var(--subtext);">Enter your health data for an AI-powered risk assessment</p>
+        </div>
+        <div class="flex flex-col items-center gap-1 pt-1">
+          <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode"><span class="knob"></span></button>
+          <span style="font-size:10px;color:var(--subtext);" id="dark-label">Light</span>
         </div>
       </header>
 
@@ -136,43 +200,68 @@
       <!-- Result -->
       <div id="result" class="mt-6 hidden"></div>
 
-      <!-- Footer -->
-      <p class="mt-5 text-center text-[11px] text-gray-400 leading-relaxed">For informational use only. Not a medical diagnosis.</p>
+      <!-- What-if Section -->
+      <div id="whatif-section" class="mt-6 hidden">
+        <div class="whatif-card p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span style="font-size:16px;">🎯</span>
+            <p class="font-bold text-[13px]">What-if Explorer</p>
+            <span class="text-[11px] ml-1" style="color:var(--subtext);">Drag to see how changes affect your risk</span>
+          </div>
+          <div id="whatif-sliders" class="grid grid-cols-1 gap-4"></div>
+        </div>
+      </div>
+
+      <p class="mt-5 text-center text-[11px] leading-relaxed" style="color:var(--subtext);">For informational use only. Not a medical diagnosis.</p>
     </section>
   </main>
 
   <script>
+    // Dark mode
+    const toggleBtn = document.getElementById('dark-toggle');
+    const darkLabel = document.getElementById('dark-label');
+    let dark = false;
+    toggleBtn.addEventListener('click', () => {
+      dark = !dark;
+      document.documentElement.classList.toggle('dark', dark);
+      toggleBtn.classList.toggle('on', dark);
+      darkLabel.textContent = dark ? 'Dark' : 'Light';
+    });
+
     const FIELDS = {
       diabetes: [
-        { name: 'Glucose',    label: 'Glucose (mg/dL)',  type: 'number', icon: 'droplet',     placeholder: '120' },
-        { name: 'BloodPressure', label: 'Blood Pressure', type: 'number', icon: 'gauge',       placeholder: '80' },
-        { name: 'BMI',        label: 'BMI',              type: 'number', icon: 'scale',        placeholder: '24.5', step: '0.1' },
-        { name: 'Insulin',    label: 'Insulin (μU/mL)',  type: 'number', icon: 'syringe',      placeholder: '85' },
-        { name: 'Age',        label: 'Age',              type: 'number', icon: 'user',         placeholder: '35' },
-        { name: 'Pregnancies',label: 'Pregnancies',      type: 'number', icon: 'baby',         placeholder: '0' },
-        { name: 'SkinThickness', label: 'Skin Thickness', type: 'number', icon: 'layers',     placeholder: '20' },
-        { name: 'DiabetesPedigreeFunction', label: 'Pedigree Function', type: 'number', icon: 'dna', placeholder: '0.5', step: '0.01' },
+        { name: 'Glucose',    label: 'Glucose (mg/dL)',  type: 'number', icon: 'droplet',  placeholder: '120', min:50,   max:200, step:1 },
+        { name: 'BloodPressure', label: 'Blood Pressure',type: 'number', icon: 'gauge',    placeholder: '80',  min:40,   max:140, step:1 },
+        { name: 'BMI',        label: 'BMI',              type: 'number', icon: 'scale',    placeholder: '24.5',min:10,   max:60,  step:0.1 },
+        { name: 'Insulin',    label: 'Insulin (μU/mL)',  type: 'number', icon: 'syringe',  placeholder: '85',  min:0,    max:400, step:1 },
+        { name: 'Age',        label: 'Age',              type: 'number', icon: 'user',     placeholder: '35',  min:10,   max:100, step:1 },
+        { name: 'Pregnancies',label: 'Pregnancies',      type: 'number', icon: 'baby',     placeholder: '0',   min:0,    max:15,  step:1 },
+        { name: 'SkinThickness', label: 'Skin Thickness',type: 'number', icon: 'layers',   placeholder: '20',  min:0,    max:100, step:1 },
+        { name: 'DiabetesPedigreeFunction', label: 'Pedigree Function', type: 'number', icon: 'dna', placeholder: '0.5', min:0.05, max:2.5, step:0.01 },
       ],
       heart: [
-        { name: 'age',     label: 'Age',               type: 'number', icon: 'user',          placeholder: '45' },
-        { name: 'sex',     label: 'Sex',               type: 'select', icon: 'users',         options: [['','Select'],['1','Male'],['0','Female']] },
-        { name: 'chol',    label: 'Cholesterol (mg/dL)',type: 'number', icon: 'flask-conical', placeholder: '200' },
-        { name: 'trestbps',label: 'Resting BP',        type: 'number', icon: 'gauge',         placeholder: '130' },
-        { name: 'thalach', label: 'Max Heart Rate',    type: 'number', icon: 'heart-pulse',   placeholder: '150' },
-        { name: 'cp',      label: 'Chest Pain (0-3)',  type: 'number', icon: 'activity',      placeholder: '0' },
-        { name: 'fbs',     label: 'Fasting BS >120',   type: 'select', icon: 'droplets',      options: [['','Select'],['0','No'],['1','Yes']] },
-        { name: 'restecg', label: 'Rest ECG (0-2)',    type: 'number', icon: 'heart',         placeholder: '0' },
-        { name: 'exang',   label: 'Exercise Angina',   type: 'select', icon: 'zap',           options: [['','Select'],['0','No'],['1','Yes']] },
-        { name: 'oldpeak', label: 'Oldpeak',           type: 'number', icon: 'trending-down', placeholder: '1.0', step: '0.1' },
-        { name: 'slope',   label: 'Slope (0-2)',       type: 'number', icon: 'bar-chart-2',   placeholder: '1' },
-        { name: 'ca',      label: 'CA (0-3)',          type: 'number', icon: 'git-branch',    placeholder: '0' },
-        { name: 'thal',    label: 'Thal (0-3)',        type: 'number', icon: 'shield',        placeholder: '2' },
+        { name: 'age',     label: 'Age',               type: 'number', icon: 'user',         placeholder: '45', min:20,  max:90,  step:1 },
+        { name: 'sex',     label: 'Sex',               type: 'select', icon: 'users',        options: [['','Select'],['1','Male'],['0','Female']] },
+        { name: 'chol',    label: 'Cholesterol (mg/dL)',type: 'number', icon: 'flask-conical',placeholder: '200',min:100, max:400, step:1 },
+        { name: 'trestbps',label: 'Resting BP',        type: 'number', icon: 'gauge',        placeholder: '130',min:80,  max:200, step:1 },
+        { name: 'thalach', label: 'Max Heart Rate',    type: 'number', icon: 'heart-pulse',  placeholder: '150',min:60,  max:220, step:1 },
+        { name: 'cp',      label: 'Chest Pain (0-3)',  type: 'number', icon: 'activity',     placeholder: '0',  min:0,   max:3,   step:1 },
+        { name: 'fbs',     label: 'Fasting BS >120',   type: 'select', icon: 'droplets',     options: [['','Select'],['0','No'],['1','Yes']] },
+        { name: 'restecg', label: 'Rest ECG (0-2)',    type: 'number', icon: 'heart',        placeholder: '0',  min:0,   max:2,   step:1 },
+        { name: 'exang',   label: 'Exercise Angina',   type: 'select', icon: 'zap',          options: [['','Select'],['0','No'],['1','Yes']] },
+        { name: 'oldpeak', label: 'Oldpeak',           type: 'number', icon: 'trending-down',placeholder: '1.0',min:0,   max:6,   step:0.1 },
+        { name: 'slope',   label: 'Slope (0-2)',       type: 'number', icon: 'bar-chart-2',  placeholder: '1',  min:0,   max:2,   step:1 },
+        { name: 'ca',      label: 'CA (0-3)',          type: 'number', icon: 'git-branch',   placeholder: '0',  min:0,   max:3,   step:1 },
+        { name: 'thal',    label: 'Thal (0-3)',        type: 'number', icon: 'shield',       placeholder: '2',  min:0,   max:3,   step:1 },
       ]
     };
 
     let currentTab = 'diabetes';
-    const fieldsEl = document.getElementById('fields');
-    const resultEl = document.getElementById('result');
+    let lastFormData = null;
+    const fieldsEl   = document.getElementById('fields');
+    const resultEl   = document.getElementById('result');
+    const whatifSec  = document.getElementById('whatif-section');
+    const whatifEl   = document.getElementById('whatif-sliders');
 
     function renderFields(tab) {
       fieldsEl.classList.remove('fade-swap');
@@ -182,7 +271,7 @@
         const id = `f-${tab}-${f.name}`;
         const control = f.type === 'select'
           ? `<select id="${id}" name="${f.name}" required>${f.options.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</select>`
-          : `<input id="${id}" name="${f.name}" type="number" inputmode="decimal" ${f.step ? `step="${f.step}"` : ''} placeholder="${f.placeholder||''}" required />`;
+          : `<input id="${id}" name="${f.name}" type="number" inputmode="decimal" step="${f.step||1}" placeholder="${f.placeholder||''}" required />`;
         return `
           <div>
             <label for="${id}" class="field-label block mb-1.5">${f.label}</label>
@@ -205,6 +294,7 @@
           b.classList.toggle('inactive', b.dataset.tab !== tab);
         });
         hideResult();
+        whatifSec.classList.add('hidden');
         renderFields(tab);
       });
     });
@@ -213,40 +303,20 @@
       const body = { disease: tab === 'heart' ? 'heart' : 'diabetes' };
       if (tab === 'diabetes') {
         body['Pregnancies'] = parseFloat(data['Pregnancies']) || 0;
-        body['Glucose'] = parseFloat(data['Glucose']);
+        body['Glucose']     = parseFloat(data['Glucose']);
         body['BloodPressure'] = parseFloat(data['BloodPressure']);
         body['SkinThickness'] = parseFloat(data['SkinThickness']) || 20;
-        body['Insulin'] = parseFloat(data['Insulin']);
-        body['BMI'] = parseFloat(data['BMI']);
+        body['Insulin']     = parseFloat(data['Insulin']);
+        body['BMI']         = parseFloat(data['BMI']);
         body['DiabetesPedigreeFunction'] = parseFloat(data['DiabetesPedigreeFunction']) || 0.5;
-        body['Age'] = parseFloat(data['Age']);
+        body['Age']         = parseFloat(data['Age']);
       } else {
-        body['age']      = parseFloat(data['age']);
-        body['sex']      = parseFloat(data['sex']);
-        body['cp']       = parseFloat(data['cp']);
-        body['trestbps'] = parseFloat(data['trestbps']);
-        body['chol']     = parseFloat(data['chol']);
-        body['fbs']      = parseFloat(data['fbs']);
-        body['restecg']  = parseFloat(data['restecg']);
-        body['thalach']  = parseFloat(data['thalach']);
-        body['exang']    = parseFloat(data['exang']);
-        body['oldpeak']  = parseFloat(data['oldpeak']);
-        body['slope']    = parseFloat(data['slope']);
-        body['ca']       = parseFloat(data['ca']);
-        body['thal']     = parseFloat(data['thal']);
+        ['age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal']
+          .forEach(k => body[k] = parseFloat(data[k]));
       }
-
-      const res = await fetch('/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
+      const res  = await fetch('/predict', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
       const json = await res.json();
-      return {
-        positive: json.prediction === 1,
-        confidence: json.confidence,
-        shap_values: json.shap_values || {}
-      };
+      return { positive: json.prediction === 1, confidence: json.confidence, shap_values: json.shap_values || {} };
     }
 
     function hideResult() {
@@ -256,11 +326,11 @@
 
     function showResult(tab, res) {
       const positive    = res.positive;
-      const bgColor     = positive ? '#FFF5F5' : '#F0FFF4';
+      const bgColor     = positive ? (dark ? '#3b1111' : '#FFF5F5') : (dark ? '#0f2a1a' : '#F0FFF4');
       const borderColor = positive ? '#F56565' : '#48BB78';
-      const textColor   = positive ? '#9B2C2C' : '#22543D';
-      const subColor    = positive ? '#C53030' : '#2F855A';
-      const iconBg      = positive ? '#FED7D7' : '#C6F6D5';
+      const textColor   = positive ? (dark ? '#fca5a5' : '#9B2C2C') : (dark ? '#86efac' : '#22543D');
+      const subColor    = positive ? (dark ? '#f87171' : '#C53030') : (dark ? '#4ade80' : '#2F855A');
+      const iconBg      = positive ? (dark ? '#7f1d1d' : '#FED7D7') : (dark ? '#14532d' : '#C6F6D5');
       const icon        = positive ? '⚠️' : '✅';
       const label       = tab === 'diabetes' ? 'Diabetes' : 'Heart Disease';
       const title       = positive ? `Elevated risk of ${label}` : `Low risk of ${label}`;
@@ -268,24 +338,20 @@
         ? 'Consider consulting a healthcare professional for a thorough evaluation.'
         : 'Your indicators look healthy. Keep up your current lifestyle.';
 
-      // SHAP bars
-      const shap = res.shap_values || {};
-      const sorted = Object.entries(shap)
-        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
-        .slice(0, 6);
-      const maxVal = Math.max(...sorted.map(([, v]) => Math.abs(v)));
-
+      const shap   = res.shap_values || {};
+      const sorted = Object.entries(shap).sort((a,b) => Math.abs(b[1])-Math.abs(a[1])).slice(0,6);
+      const maxVal = Math.max(...sorted.map(([,v]) => Math.abs(v)));
       const shapHTML = sorted.map(([feat, val]) => {
-        const pct   = maxVal > 0 ? Math.round((Math.abs(val) / maxVal) * 100) : 0;
+        const pct   = maxVal > 0 ? Math.round((Math.abs(val)/maxVal)*100) : 0;
         const color = val > 0 ? '#F56565' : '#48BB78';
         const dir   = val > 0 ? '▲ raises risk' : '▼ lowers risk';
         return `
           <div class="mb-3">
             <div class="flex justify-between mb-1" style="font-size:11px;">
-              <span style="font-weight:600;color:#4A5568;">${feat}</span>
+              <span style="font-weight:600;color:var(--text);">${feat}</span>
               <span style="color:${color};font-weight:600;">${dir}</span>
             </div>
-            <div class="w-full h-2 rounded-full" style="background:rgba(0,0,0,0.06);">
+            <div class="w-full h-2 rounded-full" style="background:var(--border);">
               <div class="h-full rounded-full progress-fill" style="width:0%;background:${color};" data-width="${pct}%"></div>
             </div>
           </div>`;
@@ -298,26 +364,21 @@
             <div class="flex-1 min-w-0">
               <h3 class="font-bold text-[15px] leading-tight" style="color:${textColor};">${title}</h3>
               <p class="mt-1 text-[13px] leading-relaxed" style="color:${subColor};">${subtitle}</p>
-
-              <!-- Confidence -->
               <div class="mt-4">
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="text-[11px] font-semibold uppercase tracking-wider" style="color:${subColor};opacity:0.85;">Confidence</span>
                   <span class="text-[13px] font-bold" style="color:${textColor};">${res.confidence}%</span>
                 </div>
-                <div class="w-full h-2 rounded-full overflow-hidden" style="background:rgba(0,0,0,0.06);">
+                <div class="w-full h-2 rounded-full overflow-hidden" style="background:var(--border);">
                   <div class="progress-fill h-full rounded-full" id="conf-bar" style="width:0%;background:${borderColor};"></div>
                 </div>
               </div>
-
-              <!-- SHAP breakdown -->
-              <div class="mt-5 pt-4" style="border-top:1px solid rgba(0,0,0,0.06);">
+              <div class="mt-5 pt-4" style="border-top:1px solid var(--border);">
                 <p class="text-[11px] font-bold uppercase tracking-wider mb-3" style="color:${textColor};">📊 Risk Factor Breakdown</p>
                 ${shapHTML}
-                <p class="mt-1 text-[10px]" style="color:#A0AEC0;">🔴 raises risk &nbsp;|&nbsp; 🟢 lowers risk &nbsp;|&nbsp; bar width = relative impact</p>
+                <p class="mt-1 text-[10px]" style="color:var(--subtext);">🔴 raises risk &nbsp;|&nbsp; 🟢 lowers risk</p>
               </div>
-
-              <p class="mt-4 text-[11px] leading-relaxed" style="color:#718096;">
+              <p class="mt-4 text-[11px] leading-relaxed" style="color:var(--subtext);">
                 Disclaimer: This is not a substitute for professional medical advice, diagnosis, or treatment.
               </p>
             </div>
@@ -326,10 +387,43 @@
 
       resultEl.classList.remove('hidden');
       requestAnimationFrame(() => {
-        const confBar = document.getElementById('conf-bar');
-        if (confBar) confBar.style.width = res.confidence + '%';
-        resultEl.querySelectorAll('[data-width]').forEach(el => {
-          el.style.width = el.dataset.width;
+        const bar = document.getElementById('conf-bar');
+        if (bar) bar.style.width = res.confidence + '%';
+        resultEl.querySelectorAll('[data-width]').forEach(el => el.style.width = el.dataset.width);
+      });
+    }
+
+    function buildWhatIfSliders(tab, formData) {
+      const numericFields = FIELDS[tab].filter(f => f.type === 'number');
+      whatifEl.innerHTML = numericFields.map(f => {
+        const val = parseFloat(formData[f.name]) || parseFloat(f.placeholder) || 0;
+        return `
+          <div>
+            <div class="flex justify-between mb-1.5" style="font-size:11px;">
+              <span class="font-semibold" style="color:var(--text);">${f.label}</span>
+              <span class="font-bold" id="wi-val-${f.name}" style="color:#4299E1;">${val}</span>
+            </div>
+            <input type="range" class="whatif-slider" id="wi-${f.name}"
+              min="${f.min||0}" max="${f.max||200}" step="${f.step||1}" value="${val}"
+              data-field="${f.name}" />
+          </div>`;
+      }).join('');
+
+      whatifSec.classList.remove('hidden');
+
+      let debounce;
+      whatifEl.querySelectorAll('.whatif-slider').forEach(slider => {
+        slider.addEventListener('input', () => {
+          document.getElementById(`wi-val-${slider.dataset.field}`).textContent = slider.value;
+          const updated = { ...lastFormData, [slider.dataset.field]: slider.value };
+          clearTimeout(debounce);
+          debounce = setTimeout(async () => {
+            try {
+              const res = await callAPI(tab, updated);
+              lastFormData = updated;
+              showResult(tab, res);
+            } catch(e) {}
+          }, 400);
         });
       });
     }
@@ -357,10 +451,13 @@
       btn.disabled = true;
       btnLabel.innerHTML = '<span class="spinner"></span> Analyzing...';
       hideResult();
+      whatifSec.classList.add('hidden');
 
       try {
         const res = await callAPI(currentTab, data);
+        lastFormData = { ...data };
         showResult(currentTab, res);
+        buildWhatIfSliders(currentTab, data);
       } catch (err) {
         resultEl.innerHTML = `<div class="rounded-2xl p-4 text-sm text-red-600 bg-red-50 border border-red-200">⚠️ Failed to connect to server. Make sure Flask is running.</div>`;
         resultEl.classList.remove('hidden');
